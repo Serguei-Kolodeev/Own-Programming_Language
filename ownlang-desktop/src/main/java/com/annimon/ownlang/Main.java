@@ -4,7 +4,7 @@ import com.annimon.ownlang.exceptions.OwnLangParserException;
 import com.annimon.ownlang.exceptions.StoppedException;
 import com.annimon.ownlang.parser.BeautifierStage;
 import com.annimon.ownlang.parser.Token;
-import com.annimon.ownlang.parser.ast.Statement;
+import com.annimon.ownlang.parser.ast.Node;
 import com.annimon.ownlang.parser.error.ParseErrorsFormatterStage;
 import com.annimon.ownlang.parser.linters.LinterStage;
 import com.annimon.ownlang.parser.optimization.OptimizationStage;
@@ -185,9 +185,11 @@ public final class Main {
                 }
             }
             if (options.showAst) {
-                Statement program = stagesData.get(ParserStage.TAG_PROGRAM);
-                System.out.println(program);
-                System.out.println(stagesData.getOrDefault(OptimizationStage.TAG_OPTIMIZATION_SUMMARY, ""));
+                System.out.println(stagesData.<Node>get(ParserStage.TAG_PROGRAM));
+                if (options.optimizationLevel > 0) {
+                    System.out.println(stagesData.getOrDefault(OptimizationStage.TAG_OPTIMIZATION_SUMMARY, ""));
+                    System.out.println(stagesData.<Node>get(OptimizationStage.TAG_OPTIMIZED_PROGRAM));
+                }
             }
             if (options.showMeasurements) {
                 System.out.println("=".repeat(25));

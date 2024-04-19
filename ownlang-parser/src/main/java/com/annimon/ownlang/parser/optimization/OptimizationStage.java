@@ -7,6 +7,7 @@ import com.annimon.ownlang.stages.StagesData;
 public class OptimizationStage implements Stage<Node, Node> {
 
     public static final String TAG_OPTIMIZATION_SUMMARY = "optimizationSummary";
+    public static final String TAG_OPTIMIZED_PROGRAM = "optimizedProgram";
 
     private final int level;
     private final boolean summary;
@@ -48,6 +49,7 @@ public class OptimizationStage implements Stage<Node, Node> {
                 %s
                 """.formatted(iteration, optimization.summaryInfo())
             );
+            stagesData.put(TAG_OPTIMIZED_PROGRAM, result);
         }
 
         return result;
