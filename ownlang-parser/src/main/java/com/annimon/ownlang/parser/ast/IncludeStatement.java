@@ -8,7 +8,7 @@ import com.annimon.ownlang.parser.error.ParseErrorsFormatterStage;
 import com.annimon.ownlang.stages.*;
 import com.annimon.ownlang.util.Range;
 import com.annimon.ownlang.util.SourceLocation;
-import com.annimon.ownlang.util.input.InputSourceFile;
+import com.annimon.ownlang.util.input.InputSourceDetector;
 import com.annimon.ownlang.util.input.SourceLoaderStage;
 
 /**
@@ -18,10 +18,12 @@ import com.annimon.ownlang.util.input.SourceLoaderStage;
 public final class IncludeStatement extends InterruptableNode implements Statement, SourceLocation {
 
     public final Node expression;
+    private final InputSourceDetector inputSourceDetector;
     private Range range;
-    
+
     public IncludeStatement(Node expression) {
         this.expression = expression;
+        inputSourceDetector = new InputSourceDetector();
     }
 
     public void setRange(Range range) {
@@ -46,7 +48,7 @@ public final class IncludeStatement extends InterruptableNode implements Stateme
                     // TODO LinterStage based on main context
                     .then(new FunctionAddingStage())
                     .then(new ExecutionStage())
-                    .perform(stagesData, new InputSourceFile(path));
+                    .perform(stagesData, inputSourceDetector.toInputSource(path));
         } catch (OwnLangParserException ex) {
             final var error = new ParseErrorsFormatterStage()
                     .perform(stagesData, ex.getParseErrors());
