@@ -1,0 +1,8 @@
+use std, functional
+
+data = ["apple", "banana", "cherry", "apricot", "coconut"]
+println tomap(data, def(str) = str.substring(0, 1))
+println tomap(data, def(str) = str.substring(0, 1), ::toUpperCase)
+println tomap(data, def(str) = str.substring(0, 1), ::toUpperCase, ::joinValues)
+
+def joinValues(oldValue, newValue) = oldValue + ", " + newValue

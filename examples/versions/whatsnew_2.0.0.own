@@ -1,0 +1,46 @@
+use std
+
+title("Breaking changes")
+println "Minimal Java version is 17"
+println "Simplified use statement: use std, math"
+println "More strict lexer"
+
+title("Changes")
+println "Support for long number declaration:"
+println "  Int overflow: " + (1000000*7000)
+println "  Long " + (1000000*7000L)
+println "Better error visualizing"
+println "Semantic linter as a required stage"
+println "Preserve the order of Map elements by default:"
+map = {"first": 1, "second": 2, "third": 3}
+println "  " + map
+println "Ability to run programs from resources by adding \"resource:\" prefix to path"
+println "Added internal scripts and command `ownlang run` to run them"
+include "resource:/scripts/listscripts.own"
+
+title("Modules")
+println "std::parseDouble:"
+println "  -.2e5: " + parseDouble("-.2e5")
+println "std::nanotime:"
+println "  " + nanotime()
+println "std::getenv"
+println "  Env.variable JAVA_HOME: " + getenv("JAVA_HOME", "N/A")
+println "std::getprop"
+println "  Property ownlangScript: " + getenv("ownlangScript", "N/A")
+println "http::httpSync"
+
+println "functional"
+println "  groupby, tomap"
+println "functional Stream"
+println "  groupBy, filterNot, forEachIndexed, toMap, anyMatch, allMatch, noneMatch"
+
+println "canvasfx works for Java 17+ (Windows only)"
+println "new server module"
+
+// helpers
+def title(s) {
+  println "\n"
+  println "=" * s.length
+  println s
+  println "=" * s.length
+}

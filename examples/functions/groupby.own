@@ -1,0 +1,12 @@
+use std, functional
+
+data = ["apple", "banana", "cherry", "apricot", "coconut"]
+println groupby(data, def(str) = str.substring(0, 1))
+
+map = {"abc": 123, "test1": 234, "test2": 345, "test3": 456, "def": 567}
+println groupby(map, def(k, v) = k.startsWith("test"))
+
+arr = [1, 2, 3, 4, 1, 2, 3, 1, 2, 3]
+result = groupby(arr, def(v) = v % 2 == 0)
+println "even: " + result[true]
+println "odd: " + result[false]

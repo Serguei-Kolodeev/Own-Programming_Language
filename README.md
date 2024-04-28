@@ -105,11 +105,10 @@ for y : 1 .. 10 {
 Easy async HTTP requests with `http` module.
 
 ```scala
-use std, http, functional
+use std, http, functional, json
 
 // GET request
 http("https://api.github.com/events", def(r) {
-  use json
   events = jsondecode(r)
   println events[0]
 })
