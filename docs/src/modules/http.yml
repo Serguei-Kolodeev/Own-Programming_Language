@@ -69,6 +69,7 @@ functions:
     args: 'url, method = "GET", requestParams = {}, options = {}'
     desc: Synchronous version of `http` function. See above for parameters description.
     desc_ru: Синхронная версия функции `http`. См. выше описание параметров.
+    since: 2.0.0
     example: |-
       use http
       extract(isOk, content) = httpSync("http://jsonplaceholder.typicode.com/users", "POST", {"name": "OwnLang", "versionCode": 10})
