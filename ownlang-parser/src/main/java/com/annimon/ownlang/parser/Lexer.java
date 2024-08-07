@@ -118,7 +118,7 @@ public final class Lexer {
     private final int length;
     
     private final List<Token> tokens;
-    private final StringBuilder buffer;
+    private final StringBuilder globalBuffer;
 
     private int pos;
     private int row, col;
@@ -128,7 +128,7 @@ public final class Lexer {
         length = input.length();
         
         tokens = new ArrayList<>();
-        buffer = new StringBuilder(40);
+        globalBuffer = new StringBuilder(40);
         row = col = 1;
     }
     
@@ -184,7 +184,7 @@ public final class Lexer {
         if (decimal) {
             addToken(TokenType.DECIMAL_NUMBER, buffer.toString(), startPos);
         } else if (current == 'L') {
-            next();
+            skip();
             addToken(TokenType.LONG_NUMBER, buffer.toString(), startPos);
         } else {
             addToken(TokenType.NUMBER, buffer.toString(), startPos);
@@ -192,11 +192,11 @@ public final class Lexer {
     }
 
     private int subTokenizeScientificNumber(Pos startPos) {
-        int sign = 1;
-        switch (next()) {
-            case '-': sign = -1;
-            case '+': skip(); break;
-        }
+        int sign = switch (next()) {
+            case '-' -> { skip(); yield -1; }
+            case '+' -> { skip(); yield 1; }
+            default -> 1;
+        };
 
         boolean hasValue = false;
         char current = peek(0);
@@ -237,7 +237,7 @@ public final class Lexer {
         if (buffer.isEmpty()) throw error("Empty HEX value", startPos);
         if (peek(-1) == '_') throw error("HEX value cannot end with _", startPos, markEndPos());
         if (current == 'L') {
-            next();
+            skip();
             addToken(TokenType.HEX_LONG_NUMBER, buffer.toString(), startPos);
         } else {
             addToken(TokenType.HEX_NUMBER, buffer.toString(), startPos);
@@ -320,35 +320,37 @@ public final class Lexer {
         while (true) {
             if (current == '\\') {
                 current = next();
-                switch (current) {
-                    case '\\': current = next(); buffer.append('\\'); continue;
-                    case '"': current = next(); buffer.append('"'); continue;
-                    case '0': current = next(); buffer.append('\0'); continue;
-                    case 'b': current = next(); buffer.append('\b'); continue;
-                    case 'f': current = next(); buffer.append('\f'); continue;
-                    case 'n': current = next(); buffer.append('\n'); continue;
-                    case 'r': current = next(); buffer.append('\r'); continue;
-                    case 't': current = next(); buffer.append('\t'); continue;
-                    case 'u': // http://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.3
-                        int rollbackPosition = pos;
-                        while (current == 'u') current = next();
-                        int escapedValue = 0;
-                        for (int i = 12; i >= 0 && escapedValue != -1; i -= 4) {
-                            if (isHexNumber(current)) {
-                                escapedValue |= (Character.digit(current, 16) << i);
-                            } else {
-                                escapedValue = -1;
-                            }
-                            current = next();
-                        }
-                        if (escapedValue >= 0) {
-                            buffer.append((char) escapedValue);
+                if ("\r\n\0".indexOf(current) != -1) {
+                    throw error("Reached end of line while parsing extended word.", startPos, markEndPos());
+                }
+
+                int idx = "\\0\"bfnrt".indexOf(current);
+                if (idx != -1) {
+                    current = next();
+                    buffer.append("\\\0\"\b\f\n\r\t".charAt(idx));
+                    continue;
+                }
+                if (current == 'u') {
+                    // http://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.3
+                    int rollbackPosition = pos;
+                    while (current == 'u') current = next();
+                    int escapedValue = 0;
+                    for (int i = 12; i >= 0 && escapedValue != -1; i -= 4) {
+                        if (isHexNumber(current)) {
+                            escapedValue |= (Character.digit(current, 16) << i);
                         } else {
-                            // rollback
-                            buffer.append("\\u");
-                            pos = rollbackPosition;
+                            escapedValue = -1;
                         }
-                        continue;
+                        current = next();
+                    }
+                    if (escapedValue >= 0) {
+                        buffer.append((char) escapedValue);
+                    } else {
+                        // rollback
+                        buffer.append("\\u");
+                        pos = rollbackPosition;
+                    }
+                    continue;
                 }
                 buffer.append('\\');
                 continue;
@@ -396,8 +398,8 @@ public final class Lexer {
     }
     
     private StringBuilder createBuffer() {
-        buffer.setLength(0);
-        return buffer;
+        globalBuffer.setLength(0);
+        return globalBuffer;
     }
 
     private Pos markPos() {
