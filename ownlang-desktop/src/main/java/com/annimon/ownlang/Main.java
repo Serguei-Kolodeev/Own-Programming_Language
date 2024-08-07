@@ -73,7 +73,9 @@ public final class Main {
 
                 case "-l":
                 case "--lint":
-                    final String lintMode = i + 1 < args.length ? args[++i] : LinterStage.Mode.SEMANTIC.name();
+                    final String lintMode = i + 1 < args.length
+                            ? args[++i]
+                            : LinterStage.Mode.SEMANTIC.name();
                     options.lintMode = switch (lintMode.toLowerCase(Locale.ROOT)) {
                         case "none" -> LinterStage.Mode.NONE;
                         case "full" -> LinterStage.Mode.FULL;
@@ -106,7 +108,7 @@ public final class Main {
                     return;
 
                 default:
-                    if (options.programSource == null) {
+                    if (options.programPath == null && options.programSource == null) {
                         options.programSource = args[i];
                         createOwnLangArgs(args, i + 1);
                     }

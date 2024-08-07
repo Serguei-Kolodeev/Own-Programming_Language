@@ -1,5 +1,11 @@
 # Changelog
 
+## Next
+
+### Fixes
+- Fix passing arguments
+
+
 ## 2.0.0
 
 ### Breaking changes
