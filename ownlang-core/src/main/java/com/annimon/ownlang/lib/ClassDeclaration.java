@@ -5,7 +5,8 @@ import java.util.List;
 public record ClassDeclaration(
         String name,
         List<ClassField> classFields,
-        List<ClassMethod> classMethods) implements Instantiable {
+        List<ClassMethod> classMethods
+) implements Instantiable {
 
     /**
      * Create an instance and put evaluated fields with method declarations

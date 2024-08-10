@@ -3,7 +3,8 @@
 ## Next
 
 ### Fixes
-- Fix passing arguments
+- Fix passing command-line arguments to scripts
+- Fix `this` in non-static class methods
 
 
 ## 2.0.0

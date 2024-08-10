@@ -2,33 +2,28 @@ package com.annimon.ownlang.lib;
 
 import java.util.Objects;
 
-public class ClassMethod implements Function {
-    private final String name;
-    private final Function function;
-    private ClassInstance classInstance;
+public record ClassMethod(
+        String name,
+        Function function,
+        ClassInstance classInstance
+) implements Function {
 
     public ClassMethod(String name, Function function) {
-        this.name = name;
-        this.function = function;
+        this(name, function, null);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setClassInstance(ClassInstance classInstance) {
-        this.classInstance = classInstance;
+    public ClassMethod(ClassMethod m, ClassInstance instance) {
+        this(m.name, m.function, instance);
     }
 
     @Override
     public Value execute(Value... args) {
-        ScopeHandler.push();
-        ScopeHandler.defineVariableInCurrentScope("this", classInstance.getThisMap());
-
-        try {
+        try (final var ignored = ScopeHandler.closeableScope()) {
+            if (classInstance != null) {
+                // non-static method
+                ScopeHandler.defineVariableInCurrentScope("this", classInstance.getThisMap());
+            }
             return function.execute(args);
-        } finally {
-            ScopeHandler.pop();
         }
     }
 
@@ -38,12 +33,11 @@ public class ClassMethod implements Function {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (ClassMethod) obj;
-        return Objects.equals(this.name, that.name) &&
-                Objects.equals(this.function, that.function);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ClassMethod that)) return false;
+        return Objects.equals(name, that.name)
+                && Objects.equals(function, that.function);
     }
 
     @Override
@@ -53,8 +47,6 @@ public class ClassMethod implements Function {
 
     @Override
     public String toString() {
-        return "ClassMethod[" +
-                "name=" + name + ", " +
-                "function=" + function + ']';
+        return "ClassMethod[" + name + ']';
     }
 }

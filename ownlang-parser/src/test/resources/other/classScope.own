@@ -1,0 +1,44 @@
+use std, debug
+
+def testThisOnSingleInstance() {
+  s = new ClassScope({"id": 1})
+  assertEquals(1, s.getId())
+  assertEquals(1, s.getDataId())
+}
+
+def testThisOnMultipleInstances() {
+  s1 = new ClassScope({"id": 1})
+  s2 = new ClassScope({"id": 2})
+  s3 = new ClassScope({"id": 3})
+  assertEquals(1, s1.getId())
+  assertEquals(1, s1.getDataId())
+  assertEquals(2, s2.getId())
+  assertEquals(2, s2.getDataId())
+  assertEquals(3, s3.getId())
+  assertEquals(3, s3.getDataId())
+}
+def testToString() {
+  s1 = new ClassScope({"id": 1})
+  s2 = new ClassScope({"id": 2})
+  assertEquals("ClassScope{id=1}", s1.toString())
+  assertEquals("ClassScope{id=2}", s2.toString())
+}
+
+class ClassScope {
+  def ClassScope(data) {
+    this.id = data.id
+    this.data = data
+  }
+
+  def getId() {
+    return this.id
+  }
+
+  def getDataId() {
+    return this.data.id
+  }
+
+  def toString() {
+    return "ClassScope{id=" + this.id + "}"
+  }
+}

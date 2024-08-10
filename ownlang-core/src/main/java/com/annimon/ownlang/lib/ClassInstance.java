@@ -25,9 +25,9 @@ public class ClassInstance implements Value {
         thisMap.set(f.name(), f.evaluableValue().eval());
     }
 
-    public void addMethod(ClassMethod method) {
-        method.setClassInstance(this);
-        final String name = method.getName();
+    public void addMethod(ClassMethod m) {
+        final String name = m.name();
+        final var method = new ClassMethod(m, this);
         thisMap.set(name, method);
         if (name.equals(className)) {
             constructor = method;

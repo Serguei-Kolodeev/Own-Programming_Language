@@ -27,7 +27,7 @@ public final class ConditionalExpression implements Node {
 
         private final String name;
 
-        private Operator(String name) {
+        Operator(String name) {
             this.name = name;
         }
 
@@ -36,7 +36,8 @@ public final class ConditionalExpression implements Node {
         }
     }
 
-    public final Node expr1, expr2;
+    public final Node expr1;
+    public final Node expr2;
     public final Operator operation;
 
     public ConditionalExpression(Operator operation, Node expr1, Node expr2) {
@@ -47,25 +48,20 @@ public final class ConditionalExpression implements Node {
 
     @Override
     public Value eval() {
-        switch (operation) {
-            case AND:
-                return NumberValue.fromBoolean((expr1AsInt() != 0) && (expr2AsInt() != 0));
-            case OR:
-                return NumberValue.fromBoolean((expr1AsInt() != 0) || (expr2AsInt() != 0));
-
-            case NULL_COALESCE:
-                return nullCoalesce();
-
-            default:
-                return NumberValue.fromBoolean(evalAndCompare());
-        }
+        return switch (operation) {
+            case AND -> NumberValue.fromBoolean((expr1AsInt() != 0) && (expr2AsInt() != 0));
+            case OR -> NumberValue.fromBoolean((expr1AsInt() != 0) || (expr2AsInt() != 0));
+            case NULL_COALESCE -> nullCoalesce();
+            default -> NumberValue.fromBoolean(evalAndCompare());
+        };
     }
 
     private boolean evalAndCompare() {
         final Value value1 = expr1.eval();
         final Value value2 = expr2.eval();
 
-        double number1, number2;
+        double number1;
+        double number2;
         if (value1.type() == Types.NUMBER) {
             number1 = value1.asNumber();
             number2 = value2.asNumber();
@@ -74,18 +70,15 @@ public final class ConditionalExpression implements Node {
             number2 = 0;
         }
 
-        switch (operation) {
-            case EQUALS: return number1 == number2;
-            case NOT_EQUALS: return number1 != number2;
-
-            case LT: return number1 < number2;
-            case LTEQ: return number1 <= number2;
-            case GT: return number1 > number2;
-            case GTEQ: return number1 >= number2;
-
-            default:
-                throw new OperationIsNotSupportedException(operation);
-        }
+        return switch (operation) {
+            case EQUALS -> number1 == number2;
+            case NOT_EQUALS -> number1 != number2;
+            case LT -> number1 < number2;
+            case LTEQ -> number1 <= number2;
+            case GT -> number1 > number2;
+            case GTEQ -> number1 >= number2;
+            default -> throw new OperationIsNotSupportedException(operation);
+        };
     }
 
     private Value nullCoalesce() {
