@@ -170,6 +170,10 @@ types:
         args: ''
         desc: returns RequestBuilderValue
         desc_ru: возвращает RequestBuilderValue
+      - name: newClient
+        args: ''
+        desc: returns HttpClientBuilderValue
+        desc_ru: возвращает HttpClientBuilderValue
   - name: HttpClientValue
     functions:
       - name: connectTimeoutMillis
@@ -208,3 +212,30 @@ types:
         args: ''
         desc: ''
         desc_ru: ''
+  - name: HttpClientBuilderValue
+    functions:
+      - name: callTimeout
+        args: 'duration, timeUnit'
+        desc: 'Sets call timeout for `duration` and `timeUnit` one of "millis"/"milliseconds", "seconds", "minutes", "hours", "days"'
+        desc_ru: 'Устанавливает таймаут вызова в `duration` и `timeUnit` один из "millis"/"milliseconds", "seconds", "minutes", "hours", "days"'
+      - name: connectTimeout
+        args: 'duration, timeUnit'
+        desc: 'Sets connect timeout for `duration` and `timeUnit` one of "millis"/"milliseconds", "seconds", "minutes", "hours", "days"'
+        desc_ru: 'Устанавливает таймаут соединения в `duration` и `timeUnit` один из "millis"/"milliseconds", "seconds", "minutes", "hours", "days"'
+      - name: readTimeout
+        args: 'duration, timeUnit'
+        desc: 'Sets read timeout for `duration` and `timeUnit` one of "millis"/"milliseconds", "seconds", "minutes", "hours", "days"'
+        desc_ru: 'Устанавливает таймаут чтения в `duration` и `timeUnit` один из "millis"/"milliseconds", "seconds", "minutes", "hours", "days"'
+      - name: writeTimeout
+        args: 'duration, timeUnit'
+        desc: 'Sets write timeout for `duration` and `timeUnit` one of "millis"/"milliseconds", "seconds", "minutes", "hours", "days"'
+        desc_ru: 'Устанавливает таймаут записи в `duration` и `timeUnit` один из "millis"/"milliseconds", "seconds", "minutes", "hours", "days"'
+      - name: retryOnConnectionFailure
+        args: 'flag'
+        desc: 'Enables or disables retry on connection failure'
+        desc_ru: 'Включает или выключает повтор при ошибках соединения'
+      - name: build
+        args: ''
+        desc: 'Returns new HttpClientValue'
+        desc_ru: 'Возвращает новый HttpClientValue'
+

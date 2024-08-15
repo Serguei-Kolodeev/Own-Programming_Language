@@ -17,6 +17,24 @@ public final class okhttp implements Module {
 
     @Override
     public Map<String, Value> constants() {
+        MapValue okhttp = new MapValue(3);
+        okhttp.set("client", defaultClient);
+        okhttp.set("request", args -> new RequestBuilderValue());
+        okhttp.set("newClient", args -> newClientBuilder());
+
+        return Map.of(
+                "RequestBody", requestBody(),
+                "MultipartBody", multipartBody(),
+                "okhttp", okhttp
+        );
+    }
+
+    @Override
+    public Map<String, Function> functions() {
+        return Collections.emptyMap();
+    }
+
+    private static MapValue requestBody() {
         MapValue requestBody = new MapValue(5);
         requestBody.set("bytes", args -> {
             Arguments.checkOrOr(2, 4, args.length);
@@ -52,8 +70,10 @@ public final class okhttp implements Module {
                     args[1].asString()
             ));
         });
+        return requestBody;
+    }
 
-
+    private static MapValue multipartBody() {
         MapValue multipartBody = new MapValue(6);
         multipartBody.set("ALTERNATIVE", new StringValue(MultipartBody.ALTERNATIVE.toString()));
         multipartBody.set("DIGEST", new StringValue(MultipartBody.DIGEST.toString()));
@@ -61,21 +81,10 @@ public final class okhttp implements Module {
         multipartBody.set("MIXED", new StringValue(MultipartBody.MIXED.toString()));
         multipartBody.set("PARALLEL", new StringValue(MultipartBody.PARALLEL.toString()));
         multipartBody.set("builder", args -> new MultipartBodyBuilderValue());
-
-
-        MapValue okhttp = new MapValue(3);
-        okhttp.set("client", defaultClient);
-        okhttp.set("request", args -> new RequestBuilderValue());
-
-        return Map.of(
-                "RequestBody", requestBody,
-                "MultipartBody", multipartBody,
-                "okhttp", okhttp
-        );
+        return multipartBody;
     }
 
-    @Override
-    public Map<String, Function> functions() {
-        return Collections.emptyMap();
+    private static HttpClientBuilderValue newClientBuilder() {
+        return new HttpClientBuilderValue(new OkHttpClient.Builder());
     }
 }

@@ -6,6 +6,9 @@
 - Fix passing command-line arguments to scripts
 - Fix `this` in non-static class methods
 
+### Modules
+- [okhttp] Added `okhttp.newClient()` and `HttpClientBuilderValue`
+
 
 ## 2.0.0
 
